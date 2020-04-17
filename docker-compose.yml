@@ -2,8 +2,8 @@ version: "3.3"
 services:
   image:
     build: .
-    command: "steamcmd-wrapper ./badlads/BadLadsServer.sh -SteamServerName $(<SERVERNAME)"
     environment:
+      SERVERNAME: BadLadsDefaultServer
       STEAMCMD_APP_ID: "1203110"
       STEAMCMD_SKIP: "false"
       USER_UID: "1000"
