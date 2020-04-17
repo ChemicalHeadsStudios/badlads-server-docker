@@ -27,5 +27,5 @@ ENV SERVERNAME=BadLadsDockerServerName
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD steamcmd-wrapper ./badlads/BadLadsServer.sh -SteamServerName $SERVERNAME ARGS
+CMD steamcmd-wrapper ./badlads/BadLadsServer.sh -SteamServerName $SERVERNAME $ARGS
 
