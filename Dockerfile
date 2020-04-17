@@ -25,5 +25,3 @@ ENV STEAMCMD_LOGIN=anonymous
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["steamcmd-wrapper", "true"]
-
-LABEL maintainer cliffrowley@gmail.com
