@@ -3,7 +3,6 @@ services:
   image:
     build: .
     environment:
-      SERVERNAME: BadLadsDefaultServer
       STEAMCMD_APP_ID: "1203110"
       STEAMCMD_SKIP: "false"
       USER_UID: "1000"
