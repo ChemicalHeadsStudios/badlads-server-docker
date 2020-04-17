@@ -20,11 +20,11 @@ ADD entrypoint.sh /entrypoint.sh
 ADD steamcmd-* /usr/local/bin/
 RUN chmod +x /entrypoint.sh /usr/local/bin/steamcmd-*
 
-ENV ARGS=""
+ENV BADLADS_ARGS=""
 ENV STEAMCMD_LOGIN=anonymous
 ENV SERVERNAME=BadLadsDockerServerName
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD steamcmd-wrapper ./badlads/BadLadsServer.sh -SteamServerName $SERVERNAME $ARGS
+CMD steamcmd-wrapper ./badlads/BadLadsServer.sh -SteamServerName=$SERVERNAME $BADLADS_ARGS
 
