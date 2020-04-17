@@ -16,7 +16,6 @@ set -e
     +force_install_dir /data/badlads \
     +app_update $STEAMCMD_APP_ID $beta $betapassword $validate \
     +quit
-    mkdir -p /home/steam/.steam/sdk64/; cp /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/; \ 
-/home/steam/badlads/BadLadsServer.sh
+  mkdir -p /home/steam/.steam/sdk64/; cp /home/steam/.steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/
 
 exec "$@"
