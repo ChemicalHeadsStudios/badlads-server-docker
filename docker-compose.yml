@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  image:
+  badlads:
     build: .
     environment:
       STEAMCMD_APP_ID: "1203110"
