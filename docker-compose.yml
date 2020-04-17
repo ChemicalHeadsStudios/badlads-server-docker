@@ -2,7 +2,7 @@ version: "3.3"
 services:
   image:
     build: .
-    command: "ls al; steamcmd-wrapper ./BadLadsDedicatedServer/BadLadsServer.sh"
+    command: "steamcmd-wrapper ./BadLadsDedicatedServer/BadLadsServer.sh"
     environment:
       STEAMCMD_APP_ID: "1203110"
       STEAMCMD_SKIP: "false"
