@@ -2,17 +2,12 @@ version: "3.3"
 services:
   image:
     build: .
-    image: zobees/steamcmd
-    tty: true
-    stdin_open: true
-    command: "steamcmd-wrapper ./7DaysToDieServer.x86_64 -logfile /dev/stdout -configfile=serverconfig.xml -quit -batchmode -nographics -dedicated"
+    command: "ls al; steamcmd-wrapper ./BadLadsDedicatedServer/BadLadsServer.sh"
     environment:
-      STEAMCMD_APP_ID: "294420"
-      STEAMCMD_SKIP: "true"
+      STEAMCMD_APP_ID: "1203110"
+      STEAMCMD_SKIP: "false"
       USER_UID: "1000"
       USER_GID: "1000"
-    ports:
-      - "26900-26902:26900-26902"
-      - "26900-26902:26900-26902/udp"
+    network_mode: "host"
     volumes:
       - "./data:/data"
