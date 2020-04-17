@@ -7,6 +7,7 @@ services:
       STEAMCMD_SKIP: "false"
       USER_UID: "1000"
       USER_GID: "1000"
+      SERVERNAME: "BadLadsComposedName"
     network_mode: "host"
     volumes:
       - "./data:/data"
