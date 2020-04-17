@@ -16,7 +16,6 @@ RUN addgroup --gid 1000 steam && \
     mkdir -m 777 /data && \
     chown steam:steam /data /home/steam
 
-ADD SERVERNAME .
 ADD entrypoint.sh /entrypoint.sh
 ADD steamcmd-* /usr/local/bin/
 RUN chmod +x /entrypoint.sh /usr/local/bin/steamcmd-*
