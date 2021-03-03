@@ -15,25 +15,6 @@ A generic docker image for [SteamCMD](https://developer.valvesoftware.com/wiki/S
  3. Map your ports as appropriate.
  4. Prefix the container command with `steamcmd-run`.
 
-For example, to install and run a 7 Days to Die dedicated server:
-
-``` sh
-docker run -d -v $PWD/data:/data \
-  -p 26900-26902:26900-26902 \
-  -p 26900-26902:26900-26902/udp \
-  -e STEAMCMD_APP_ID=294420 \
-  -e USER_UID=1001 \
-  -e USER_GID=1001 \
-  zobees/steamcmd \
-  steamcmd-run ./7DaysToDieServer.x86_64 \
-    -logfile /dev/stdout \
-    -configfile=serverconfig.xml \
-    -quit \
-    -batchmode \
-    -nographics \
-    -dedicated
-```
-
 ## Authentication
 
 If authentication is required, specify the username and password separated by a space via `STEAMCMD_LOGIN` (defaults to `anonymous`).
