@@ -1,7 +1,3 @@
-# zobees/steamcmd
-
-A generic docker image for [SteamCMD](https://developer.valvesoftware.com/wiki/SteamCMD).
-
 ## Features
 
  * Installs and updates Steam apps on container startup.
