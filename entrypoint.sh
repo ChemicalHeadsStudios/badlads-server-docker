@@ -7,7 +7,7 @@ chmod g+w /data
 chmod o+w /dev/stdout /dev/stderr
 
 cd /data
-export LD_LIBRARY_PATH=.
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steam/linux64"
 
 if [ $(id -u) = 0 ]; then
   echo "Preparing to drop privileges"

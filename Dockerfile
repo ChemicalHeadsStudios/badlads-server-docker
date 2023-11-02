@@ -16,6 +16,7 @@ RUN addgroup --gid 1000 steam && \
     mkdir -m 777 /data && \
     chown steam:steam /data /home/steam
 
+ADD steamclient-old.so /home/steam/linux64/steamclient.so
 ADD entrypoint.sh /entrypoint.sh
 ADD steamcmd-* /usr/local/bin/
 RUN chmod +x /entrypoint.sh /usr/local/bin/steamcmd-*
