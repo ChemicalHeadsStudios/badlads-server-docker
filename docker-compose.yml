@@ -1,14 +1,27 @@
-version: "3.3"
 services:
   badlads:
     build: .
+    platform: linux/amd64
+    restart: unless-stopped
+    stop_grace_period: 60s
+    security_opt:
+      - no-new-privileges:true
     environment:
       STEAMCMD_APP_ID: "1203110"
-      STEAMCMD_SKIP: "false"
-      USER_UID: "1000"
-      USER_GID: "1000"
-      SERVERNAME: "${SERVERNAME}"
-      BADLADS_ARGS: "-useperfthreads"
-    network_mode: "host"
+      STEAMCMD_BETA: "${STEAMCMD_BETA:-public}"
+      STEAMCMD_BETA_PASSWORD: "${STEAMCMD_BETA_PASSWORD:-}"
+      STEAMCMD_LOGIN: "${STEAMCMD_LOGIN:-anonymous}"
+      STEAMCMD_SKIP: "${STEAMCMD_SKIP:-false}"
+      STEAMCMD_NO_VALIDATE: "${STEAMCMD_NO_VALIDATE:-true}"
+      USER_UID: "${USER_UID:-1000}"
+      USER_GID: "${USER_GID:-1000}"
+      SERVERNAME: "${SERVERNAME:-BadLadsDockerServer}"
+      BADLADS_ARGS: "${BADLADS_ARGS:--log -useperfthreads}"
+    network_mode: host
     volumes:
-      - "./data:/data"
+      - "${BADLADS_DATA_DIR:-./data}:/data"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

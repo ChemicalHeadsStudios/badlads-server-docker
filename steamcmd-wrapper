@@ -1,19 +1,40 @@
 #!/bin/bash
+set -euo pipefail
 
-set -e
+if [[ ! ${STEAMCMD_APP_ID:-} =~ ^[0-9]+$ ]]; then
+  echo "ERROR: STEAMCMD_APP_ID must be a numeric Steam app ID" >&2
+  exit 1
+fi
+install_dir=${STEAMCMD_INSTALL_DIR:-/data/badlads}
 
-  if [ -z "$STEAMCMD_APP_ID" ]; then
-    echo "ERROR: STEAMCMD_APP_ID is required"
+case ${STEAMCMD_SKIP:-false} in
+  true|1) skip=true ;;
+  false|0|'') skip=false ;;
+  *) echo "ERROR: STEAMCMD_SKIP must be true or false" >&2; exit 1 ;;
+esac
+case ${STEAMCMD_NO_VALIDATE:-true} in
+  true|1) validate=false ;;
+  false|0|'') validate=true ;;
+  *) echo "ERROR: STEAMCMD_NO_VALIDATE must be true or false" >&2; exit 1 ;;
+esac
+
+if [[ $skip == true ]]; then
+  if [[ ! -f "$install_dir/BadLadsServer.sh" ]]; then
+    echo "ERROR: STEAMCMD_SKIP requires an existing BadLads installation" >&2
     exit 1
   fi
+else
+  # Preserve the legacy space-separated login format without shell evaluation.
+  read -r -a login <<< "${STEAMCMD_LOGIN:-anonymous}"
+  args=(+force_install_dir "$install_dir" +login "${login[@]}"
+        +app_update "$STEAMCMD_APP_ID" -beta "${STEAMCMD_BETA:-public}")
+  if [[ -n ${STEAMCMD_BETA_PASSWORD:-} ]]; then
+    args+=(-betapassword "$STEAMCMD_BETA_PASSWORD")
+  fi
+  [[ $validate == false ]] || args+=(validate)
+  args+=(+quit)
+  echo "Checking Steam app $STEAMCMD_APP_ID, branch ${STEAMCMD_BETA:-public}"
+  steamcmd "${args[@]}"
+fi
 
-  [ -z "$STEAMCMD_NO_VALIDATE" ]   && validate="validate"
-  [ -n "$STEAMCMD_BETA" ]          && beta="-beta $STEAMCMD_BETA"
-  [ -n "$STEAMCMD_BETA_PASSWORD" ] && betapassword="-betapassword $STEAMCMD_BETA_PASSWORD"
-
-  echo "Running steamcmd"
-  steamcmd +login $STEAMCMD_LOGIN \
-    +force_install_dir /data/badlads \
-    +app_update $STEAMCMD_APP_ID $beta $betapassword $validate \
-    +quit
 exec "$@"
