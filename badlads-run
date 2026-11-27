@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+install_dir=${STEAMCMD_INSTALL_DIR:-/data/badlads}
+if [[ ! -f "$install_dir/BadLadsServer.sh" ]]; then
+  echo "ERROR: BadLadsServer.sh was not installed in $install_dir" >&2
+  exit 1
+fi
+
+# BADLADS_ARGS is a whitespace-separated list, never evaluated as shell code.
+read -r -a extra_args <<< "${BADLADS_ARGS:--log -useperfthreads}"
+cd "$install_dir"
+exec bash ./BadLadsServer.sh "-SteamServerName=${SERVERNAME:-BadLadsDockerServer}" "${extra_args[@]}" "$@"

@@ -1,35 +1,26 @@
 #!/bin/bash
-
-set -e
+set -euo pipefail
 
 umask 0002
-chmod g+w /data
-chmod o+w /dev/stdout /dev/stderr
+export LD_LIBRARY_PATH="/home/steam/linux64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-cd /data
-export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/steam/linux64"
-
-if [ $(id -u) = 0 ]; then
-  echo "Preparing to drop privileges"
-
-  if [[ -v USER_UID && "$USER_UID" != "0" ]]; then
-    echo "Adjusting uid to $USER_UID"
-    usermod -u $USER_UID steam
+if [[ $(id -u) == 0 ]]; then
+  uid=${USER_UID:-1000}
+  gid=${USER_GID:-1000}
+  if [[ ! $uid =~ ^[1-9][0-9]*$ || ! $gid =~ ^[1-9][0-9]*$ ]]; then
+    echo "ERROR: USER_UID and USER_GID must be positive, non-root numeric IDs" >&2
+    exit 1
   fi
+  [[ $(id -g steam) == "$gid" ]] || groupmod -o -g "$gid" steam
+  [[ $(id -u steam) == "$uid" ]] || usermod -u "$uid" steam
 
-  if [[ -v USER_GID ]]; then
-    echo "Adjusting gid to $USER_GID"
-    groupmod -o -g $USER_GID steam
-  fi
-
-  if [[ -v USER_UID && $(stat -c "%u" /data) != $USER_UID ]]; then
-    echo "Adjusting file permissions"
-    chown -R steam:steam /data /home/steam
-  fi
-
-  echo "Running command as normal user"
-  set -- gosu steam:steam "$@"
+  # Avoid recursively walking an unchanged game installation on every restart.
+  for directory in /data /home/steam /opt/steamcmd; do
+    if [[ $(stat -c '%u:%g' "$directory") != "$uid:$gid" ]]; then
+      chown -R steam:steam "$directory"
+    fi
+  done
+  exec gosu steam:steam "$@"
 fi
 
-echo "Running $@"
 exec "$@"

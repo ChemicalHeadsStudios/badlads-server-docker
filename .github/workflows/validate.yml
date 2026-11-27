@@ -1,0 +1,44 @@
+name: Validate server image
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Check scripts and configuration
+        run: |
+          for script in entrypoint.sh steamcmd-wrapper badlads-run tests/wrapper.sh ops/provision.sh; do
+            bash -n "$script"
+          done
+          shellcheck entrypoint.sh steamcmd-wrapper badlads-run tests/wrapper.sh ops/provision.sh
+          bash tests/wrapper.sh
+          docker compose config --quiet
+          docker compose --env-file staging.env.example config --quiet
+          docker compose --env-file staging.env.example config --format json > /tmp/staging-compose.json
+          python3 - <<'PY'
+          import json
+          with open('/tmp/staging-compose.json') as f:
+              service = json.load(f)['services']['badlads']
+          assert service['environment']['STEAMCMD_BETA'] == 'staging'
+          assert service['volumes'][0]['source'].endswith('/data-staging')
+          PY
+      - name: Build image
+        run: docker build --pull -t badlads:test .
+      - name: Verify unprivileged runtime and Steam library dependencies
+        run: |
+          test "$(docker run --rm badlads:test id -u)" = 1000
+          docker run --rm badlads:test bash -c 'ldd /home/steam/linux64/steamclient.so | tee /tmp/deps; ! grep -q "not found" /tmp/deps'
+          docker run --rm -e USER_UID=1234 -e USER_GID=1235 badlads:test bash -c 'test "$(id -u):$(id -g)" = 1234:1235; test -w /data; test -w /opt/steamcmd'
+      - name: Install and start the real staging server
+        timeout-minutes: 17
+        run: python3 tests/staging-smoke.py
